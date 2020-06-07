@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: oAuth 2.0
   version: '1.0'
-  description: ''
+  description: 'oAuth 2.0 is the industry-standard protocol for access delegation or authorization, used as a way for Internet users to grant website or applications access to their information on other websites but without giving them the passwords'
 servers:
   - url: 'http://localhost:3000'
 paths:
@@ -11,7 +11,7 @@ paths:
       summary: Consent Page
       tags: []
       responses:
-        '302':
+        '200':
           description: User will be redirected back to the redirect_uri regardless of the result of the consent process
           content:
             application/json:
@@ -95,13 +95,22 @@ paths:
                   refresh_token:
                     type: string
                     description: Use this token to request a new access token after access token has expired
+                  scope:
+                    type: string
               examples:
-                Example:
+                Access Token Generated:
                   value:
                     token_type: Bearer
                     access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
                     expires_at: '2020-07-01T17:00:00Z'
                     refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsInNjb3BlcyI6WyJJTlZPSUNFLlJFQUQiLCJJTlZPSUNFLldSSVRFIl0sImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyODEzODgsImV4cCI6MTU4OTI4MTM4OH0.nw6MdpfdVy3Q9G7r5X2iTxBV59NeS8l0J--P0b4mHrg
+                    scope: virtual_accounts.write ewallets.write
+                Access Token Refreshed:
+                  value:
+                    token_type: Bearer
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
+                    expires_at: '2020-07-01T17:00:00Z'
+                    scope: virtual_accounts.write ewallets.write
           headers:
             Cache-Control:
               schema:
@@ -109,7 +118,7 @@ paths:
                 example: ''
                 enum:
                   - no-store
-              description: ''
+              description: no-cache
               required: true
             Pragma:
               schema:
@@ -117,6 +126,33 @@ paths:
                 enum:
                   - no-cache
               required: true
+              description: no-store
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                  errors:
+                    type: string
+              examples:
+                Invalid Request:
+                  value:
+                    error_code: API_VALIDATION_ERROR
+                    message: There was an error with the format submitted to the server
+                Expired Auth Code or Mismatch Redirect URI:
+                  value:
+                    error_code: INVALID_GRANT
+                    message: The authorization code is invalid or expired or redirect URI does not match
+                Invalid Scope:
+                  value:
+                    error_code: INVALID_SCOPE
+                    message: Requested scope is invalid. Please refer to documentation for full scope list
         '401':
           description: Unauthorized
           content:
@@ -135,6 +171,10 @@ paths:
                   value:
                     error_code: INVALID_TOKEN
                     message: The access token expired
+                Invalid Client:
+                  value:
+                    error_code: INVALID_CLIENT
+                    message: Request contains an invalid client ID or secret. Please retry with the correct credential
             application/xml:
               schema:
                 type: object
@@ -170,13 +210,19 @@ paths:
                   type: string
                 client_id:
                   type: string
+                redirect_uri:
+                  type: string
+                '':
+                  type: string
               required:
                 - grant_type
+                - redirect_uri
             examples:
               Authorization Code:
                 value:
                   grant_type: authorization_code
                   code: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImUzMTU5ZjIyLTI1OTQtNGNiYS1hMDMzLTRhNWY4MGQ1MmQwZiIsImlhdCI6MTU4OTg3NjI4MywiZXhwIjoxNTg5ODc5ODgzfQ.H4DoU_zLXSUvzkSKIdYR3cXhwoQ-9gqkg491DsyTzg4
+                  redirect_uri: 'https://sample.application.com/payments'
                   client_id: b9deb6f6-63bd-46bb-823e-dd6ee7200fe8
                   client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
               Refresh Token:
