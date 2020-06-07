@@ -93,8 +93,11 @@ When the authorization code has been received, you will need to exchange it with
     "Content-Type": "application/json"
   },
   "body": {
+    "grant_type": "authorization_code",
     "code": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImUzMTU5ZjIyLTI1OTQtNGNiYS1hMDMzLTRhNWY4MGQ1MmQwZiIsImlhdCI6MTU4OTg3NjI4MywiZXhwIjoxNTg5ODc5ODgzfQ.H4DoU_zLXSUvzkSKIdYR3cXhwoQ-9gqkg491DsyTzg4",
-    "client_secret": ""
+    "redirect_uri": "https://sample.application.com/payments",
+    "client_id": "b9deb6f6-63bd-46bb-823e-dd6ee7200fe8",
+    "client_secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE"
   }
 }
 ```
@@ -108,7 +111,11 @@ title: 200
 
 ```json
 {
-  "code": "b9deb6f6-63bd-46bb-823e-dd6ee7200fe8"
+  "token_type": "Bearer",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE",
+  "scope": "virtual_accounts.write ewallets.write",
+  "expires_at": "2020-02-20T16:59:20",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsInNjb3BlcyI6WyJJTlZPSUNFLlJFQUQiLCJJTlZPSUNFLldSSVRFIl0sImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyODEzODgsImV4cCI6MTU4OTI4MTM4OH0.nw6MdpfdVy3Q9G7r5X2iTxBV59NeS8l0J--P0b4mHrg"
 }
 ```
 
@@ -140,10 +147,46 @@ title: 404
 }
 ```
 
+<!-- type: tab-end -->
+
 #### 3. Use the access token to access Xendit APIs; Xendit returns requested data
+
+The access token allows you to make requests to the Xendit API on behalf of a user, for example
+
+`curl -H "Authorization: Bearer NgCXRK...MzxYjw" https://api.xendit.co/callback_virtual_accounts`
+
+```json
+{
+  "external_id": "PAYM-12394890198023",
+  "bank_code": "BNI",
+  "name": "Luminto"
+}
+```
 
 #### 4. Requesting a refreshed access token; Spotify returns a new access token to your application
 
-2. If the user gives authorization, the client passes the authorization grant to the authorization server
-3. If the grant is valid, the authorization server returns an access token, possibly alongside a refresh and/or ID token
-4. The client now uses that access token to access the resource server
+Access tokens are deliberately set to expire after a short time, after which new tokens may be granted by supplying the refresh token originally obtained during the authorization code exchange.
+
+The request is sent to token endpoint of the Xendit APIs:
+`POST https://api.xendit.co/oauth/tokens`
+
+The body of this POST request must contain the following parameters:
+
+| Parameters    | Data Type | Required? | Description                                                     |
+| ------------- | --------- | --------- | --------------------------------------------------------------- |
+| grant_type    | string    | Required  | Set to `refresh_token`                                          |
+| refresh_token | string    | Required  | The refresh token returned from the authorization code exchange |
+| client_id     | string    | Required  | oAuth client ID for your application                            |
+| client_secret | string    | Required  | oAuth client secret for you application                         |
+
+Example
+`curl -d grant_type=refresh_token -d refresh_token=NgAagA...Sho -d client_id=5a2iw...wi291 -d client_secret=e2e9ske...sao291l https://api.xendit.co/oauth/tokens`
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE",
+  "token_type": "Bearer",
+  "scope": "virtual_account.write ewallets.write",
+  "expires_at": "2020-02-20-16:29:51"
+}
+```
