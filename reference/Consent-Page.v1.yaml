@@ -30,6 +30,15 @@ paths:
                   state:
                     type: string
                     description: 'If the initial request contained a state parameter, the response must also include the exact value from the request. The client will be using this to associate this response with the initial request.'
+              examples:
+                Consent Granted:
+                  value:
+                    code: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImUzMTU5ZjIyLTI1OTQtNGNiYS1hMDMzLTRhNWY4MGQ1MmQwZiIsImlhdCI6MTU4OTg3NjI4MywiZXhwIjoxNTg5ODc5ODgzfQ.H4DoU_zLXSUvzkSKIdYR3cXhwoQ-9gqkg491DsyTzg4
+                    state: b9deb6f6-63bd-46bb
+                Consent Denied:
+                  value:
+                    error: access_denied
+                    state: b9deb6f6-63bd-46bb
       operationId: get-authorize
       description: ''
       parameters:

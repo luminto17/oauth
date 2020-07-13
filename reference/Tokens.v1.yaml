@@ -9,7 +9,7 @@ info:
 
     - You need to refresh your access token
 servers:
-  - url: 'http://api.xendit.co'
+  - url: 'https://api.xendit.co'
 paths:
   /tokens:
     post:
@@ -142,9 +142,9 @@ paths:
       description: |-
         Use grant_type `authorization_code` to exchange code with access token that you can use to request API on behalf of your customers
 
-        Use grant_type client_credentials to request access token that you can use to request API on your application behalf
+        Use grant_type `client_credentials` to request access token that you can use to request API on your application behalf
 
-        Use grant_type refresh_token to refresh access token
+        Use grant_type `refresh_token` to refresh access token
 components:
   schemas:
     Tokens:
