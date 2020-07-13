@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  title: Consent Page
+  version: '1.0'
+  description: |+
+    The authorization interface is the screen users see when granting applications access to their account
+
+    Clients will direct a user’s browser to the authorization server to begin the OAuth process
+
+
+servers:
+  - url: 'https://dashboard.xendit.co'
+paths:
+  /oauth/authorize:
+    get:
+      summary: Get Consent Page
+      tags:
+        - consent-page
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: This parameter contains the authorization code which the client will later exchange for an access token.
+                  state:
+                    type: string
+                    description: 'If the initial request contained a state parameter, the response must also include the exact value from the request. The client will be using this to associate this response with the initial request.'
+      operationId: get-authorize
+      description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: client_id
+          description: Public identifier for the app in Xendit oAuth
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: response_type
+          description: 'Set to code, indicating that the application expects to receive an authorization code if successful.'
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: redirect_uri
+          description: 'The URI to redirect to after the user grants or denies permission. This URI needs to have been entered in the Redirect URI whitelist that you specified when you registered your application. The value of redirect_uri here must exactly match one of the values you entered when you registered your application, including upper or lowercase, terminating slashes, and such'
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: scopes
+          description: A space-separated list of scopes. Default application scopes if no scopes attached
+        - schema:
+            type: string
+          in: query
+          name: state
+          description: 'The state can be useful for correlating requests and responses. Because your redirect_uri can be guessed, using a state value can increase your assurance that an incoming connection is the result of an authentication request. If you generate a random string, or encode the hash of some client state, such as cookie, in this state variable, you can validate the response to additionally ensure that both the request and response originated in the same browser. This provides protection against attacks such as cross-site request forgery. See RFC 6749'
+    parameters: []
+components:
+  schemas: {}

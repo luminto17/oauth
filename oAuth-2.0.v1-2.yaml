@@ -4,7 +4,7 @@ info:
   version: '1.0'
   description: 'oAuth 2.0 is the industry-standard protocol for access delegation or authorization, used as a way for Internet users to grant website or applications access to their information on other websites but without giving them the passwords'
 servers:
-  - url: 'http://localhost:3000'
+  - {}
 paths:
   /oauth/authorize:
     get:

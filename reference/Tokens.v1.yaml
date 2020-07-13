@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  title: Tokens
+  version: '1.0'
+  description: |-
+    Access token is a token that you will use to request to Xendit APIs either on behalf of your application or on behalf of your customers. Xendit will perform authorization against your This endpoint allows user to manage access token, so that you can use the access token to authorize your application in any API requests. You'll use this endpoint if:
+
+    - You need an access token for any oAuth 2.0 flow (Authorization Code or Client Credentials)
+
+    - You need to refresh your access token
+servers:
+  - url: 'http://api.xendit.co'
+paths:
+  /tokens:
+    post:
+      summary: Create / Refresh Access Token
+      tags:
+        - tokens
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tokens'
+              examples:
+                Access Token Generated:
+                  value:
+                    token_type: Bearer
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
+                    expires_at: '2020-07-01T17:00:00Z'
+                    refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsInNjb3BlcyI6WyJJTlZPSUNFLlJFQUQiLCJJTlZPSUNFLldSSVRFIl0sImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyODEzODgsImV4cCI6MTU4OTI4MTM4OH0.nw6MdpfdVy3Q9G7r5X2iTxBV59NeS8l0J--P0b4mHrg
+                    scope: virtual_accounts.write ewallets.write
+                Access Token Refreshed:
+                  value:
+                    token_type: Bearer
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
+                    expires_at: '2020-07-01T17:00:00Z'
+                    scope: virtual_accounts.write ewallets.write
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              required: true
+              description: no-cache
+            Pragma:
+              schema:
+                type: string
+              description: no-store
+              required: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                  errors:
+                    type: string
+              examples:
+                Invalid Request:
+                  value:
+                    error_code: API_VALIDATION_ERROR
+                    message: There was an error with the format submitted to the server
+                Expired Auth Code or Mismatch Redirect URI:
+                  value:
+                    error_code: INVALID_GRANT
+                    message: The authorization code is invalid or expired or redirect URI does not match
+                Invalid Scope:
+                  value:
+                    error_code: INVALID_SCOPE
+                    message: Requested scope is invalid. Please refer to documentation for full scope list
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                Unauthorized:
+                  value:
+                    error_code: INVALID_TOKEN
+                    message: The access token expired
+                Invalid Client:
+                  value:
+                    error_code: INVALID_CLIENT
+                    message: Request contains an invalid client ID or secret. Please retry with the correct credential
+      operationId: post-tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  description: Authorization code that was retrieved after user gave consent to your application at given scopes
+                code:
+                  type: string
+                  description: 'The authorization code is a temporary code that the client will exchange for an access token. The code itself is obtained from the authorization server where the user gets a chance to see what the information the client is requesting, and approve or deny the request'
+                redirect_uri:
+                  type: string
+                  description: 'The URI to redirect to after the user grants or denies permission. This URI needs to have been entered in the Redirect URI whitelist that you specified when you registered your application. The value of redirect_uri here must exactly match one of the values you entered when you registered your application, including upper or lowercase, terminating slashes, and such'
+                refresh_token:
+                  type: string
+                  description: Use this token to request a new access token after access token has expired
+                client_id:
+                  type: string
+                  description: Xendit provides you a Client ID when you register your application
+                client_secret:
+                  type: string
+                  description: Xendit provides you a Client Secret when you register your application
+              required:
+                - grant_type
+                - code
+                - redirect_uri
+                - client_id
+                - client_secret
+            examples:
+              Authorization Code:
+                value:
+                  grant_type: authorization_code
+                  code: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImUzMTU5ZjIyLTI1OTQtNGNiYS1hMDMzLTRhNWY4MGQ1MmQwZiIsImlhdCI6MTU4OTg3NjI4MywiZXhwIjoxNTg5ODc5ODgzfQ.H4DoU_zLXSUvzkSKIdYR3cXhwoQ-9gqkg491DsyTzg4
+                  redirect_uri: 'https://sample.application.com/payments'
+                  client_id: b9deb6f6-63bd-46bb-823e-dd6ee7200fe8
+                  client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
+              Refresh Token:
+                value:
+                  grant_type: refresh_token
+                  refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsInNjb3BlcyI6WyJJTlZPSUNFLlJFQUQiLCJJTlZPSUNFLldSSVRFIl0sImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyODEzODgsImV4cCI6MTU4OTI4MTM4OH0.nw6MdpfdVy3Q9G7r5X2iTxBV59NeS8l0J--P0b4mHrg
+                  client_id: ''
+                  client_secret: ''
+      description: |-
+        Use grant_type `authorization_code` to exchange code with access token that you can use to request API on behalf of your customers
+
+        Use grant_type client_credentials to request access token that you can use to request API on your application behalf
+
+        Use grant_type refresh_token to refresh access token
+components:
+  schemas:
+    Tokens:
+      title: Tokens
+      type: object
+      description: ''
+      x-tags:
+        - tokens
+      properties:
+        token_type:
+          type: string
+          description: Type of the access token
+        access_token:
+          type: string
+          description: Use this token as authorization to request to Xendit APIs
+        expires_at:
+          type: string
+          description: Access token expiration time. Timezone UTC +0
+        refresh_token:
+          type: string
+          description: Use this token to request a new access token after access token has expired
+        scope:
+          type: string
+          description: A space-separated list of scopes. Default application scopes if no scopes attached
+  securitySchemes:
+    API Key:
+      name: API Key
+      type: apiKey
+      in: header
