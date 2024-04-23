@@ -11,7 +11,7 @@ info:
 servers:
   - url: 'https://api.xendit.co'
 paths:
-  /tokens:
+  /oauth/tokens:
     post:
       summary: Create / Refresh Access Token
       tags:
@@ -151,6 +151,9 @@ paths:
           in: header
           name: Authorization
           description: 'Follow this [Authentication guide](https://developers.xendit.co/api-reference/#authentication)'
+      x-stoplight:
+        id: yscdi9rk1fjsr
+    parameters: []
 components:
   schemas:
     Tokens:
