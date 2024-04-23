@@ -151,6 +151,7 @@ paths:
           in: header
           name: Authorization
           description: 'Follow this [Authentication guide](https://developers.xendit.co/api-reference/#authentication). We will change this flow by May 2024'
+          required: true
       x-stoplight:
         id: yscdi9rk1fjsr
     parameters: []
