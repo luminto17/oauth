@@ -145,6 +145,12 @@ paths:
         Use grant_type `client_credentials` to request access token that you can use to request API on your application behalf
 
         Use grant_type `refresh_token` to refresh access token
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: 'Follow this [Authentication guide](https://developers.xendit.co/api-reference/#authentication)'
 components:
   schemas:
     Tokens:
