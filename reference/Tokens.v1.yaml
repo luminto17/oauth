@@ -100,6 +100,10 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - grant_type
+                - code
+                - redirect_uri
               properties:
                 grant_type:
                   type: string
@@ -113,18 +117,6 @@ paths:
                 refresh_token:
                   type: string
                   description: Use this token to request a new access token after access token has expired
-                client_id:
-                  type: string
-                  description: Xendit provides you a Client ID when you register your application
-                client_secret:
-                  type: string
-                  description: Xendit provides you a Client Secret when you register your application
-              required:
-                - grant_type
-                - code
-                - redirect_uri
-                - client_id
-                - client_secret
             examples:
               Authorization Code:
                 value:
@@ -150,7 +142,7 @@ paths:
             type: string
           in: header
           name: Authorization
-          description: 'Follow this [Authentication guide](https://developers.xendit.co/api-reference/#authentication). We will change this flow by May 2024'
+          description: 'Base64 encoded string of `client_id:client_secret` Client ID and Secret can be obtained from [oAuth settings in Dashboard](https://dashboard.xendit.co/settings/developers#oauth)'
           required: true
       x-stoplight:
         id: yscdi9rk1fjsr
