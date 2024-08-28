@@ -102,35 +102,37 @@ paths:
               type: object
               required:
                 - grant_type
-                - code
-                - redirect_uri
               properties:
                 grant_type:
                   type: string
-                  description: Authorization code that was retrieved after user gave consent to your application at given scopes
+                  description: |-
+                    The oAuth framework specifies several grant types for different use cases, as well as a framework for creating new grant types.
+
+                    Available values:
+                    - `client_credentials`
+                    - `authorization_code`
                 code:
                   type: string
-                  description: 'The authorization code is a temporary code that the client will exchange for an access token. The code itself is obtained from the authorization server where the user gets a chance to see what the information the client is requesting, and approve or deny the request'
+                  description: 'Required for `authorization_code` grant type. The authorization code is a temporary code that the client will exchange for an access token. The code itself is obtained from the authorization server where the user gets a chance to see what the information the client is requesting, and approve or deny the request'
                 redirect_uri:
                   type: string
-                  description: 'The URI to redirect to after the user grants or denies permission. This URI needs to have been entered in the Redirect URI whitelist that you specified when you registered your application. The value of redirect_uri here must exactly match one of the values you entered when you registered your application, including upper or lowercase, terminating slashes, and such'
+                  description: 'Required for `authorization_code` grant type. The URI to redirect to after the user grants or denies permission. This URI needs to have been entered in the Redirect URI whitelist that you specified when you registered your application. The value of redirect_uri here must exactly match one of the values you entered when you registered your application, including upper or lowercase, terminating slashes, and such'
                 refresh_token:
                   type: string
-                  description: Use this token to request a new access token after access token has expired
+                  description: For `authorization_code` flow. Use this token to request a new access token after access token has expired
             examples:
               Authorization Code:
                 value:
                   grant_type: authorization_code
                   code: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImUzMTU5ZjIyLTI1OTQtNGNiYS1hMDMzLTRhNWY4MGQ1MmQwZiIsImlhdCI6MTU4OTg3NjI4MywiZXhwIjoxNTg5ODc5ODgzfQ.H4DoU_zLXSUvzkSKIdYR3cXhwoQ-9gqkg491DsyTzg4
                   redirect_uri: 'https://sample.application.com/payments'
-                  client_id: b9deb6f6-63bd-46bb-823e-dd6ee7200fe8
-                  client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyNzE2NTgsImV4cCI6NDcxMzQ3NDA1OH0.N4XSx2CmKkH0OahAn4-MUyK6UA4o80USUVbqJkk2jrE
               Refresh Token:
                 value:
                   grant_type: refresh_token
                   refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJidXNpbmVzc19pZCI6IjViOGY3ZDg2M2JjNzllOTA3ZmU0OTA1MCIsImNsaWVudF9pZCI6IjFkY2MyNDIwLTY5YjktNGE0YS05MWFmLWZlYTAwYzY2OThlNyIsInNjb3BlcyI6WyJJTlZPSUNFLlJFQUQiLCJJTlZPSUNFLldSSVRFIl0sImVudmlyb25tZW50IjoiREVWRUxPUE1FTlQiLCJpYXQiOjE1ODkyODEzODgsImV4cCI6MTU4OTI4MTM4OH0.nw6MdpfdVy3Q9G7r5X2iTxBV59NeS8l0J--P0b4mHrg
-                  client_id: ''
-                  client_secret: ''
+              Client Credentials:
+                value:
+                  grant_type: client_credentials
       description: |-
         Use grant_type `authorization_code` to exchange code with access token that you can use to request API on behalf of your customers
 
@@ -140,6 +142,7 @@ paths:
       parameters:
         - schema:
             type: string
+            example: YjlkZWI2ZjYtNjNiZC00NmJiLTgyM2UtZGQ2ZWU3MjAwZmU4OmV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS5leUppZFhOcGJtVnpjMTlwWkNJNklqVmlPR1kzWkRnMk0ySmpOemxsT1RBM1ptVTBPVEExTUNJc0ltTnNhV1Z1ZEY5cFpDSTZJakZrWTJNeU5ESXdMVFk1WWprdE5HRTBZUzA1TVdGbUxXWmxZVEF3WXpZMk9UaGxOeUlzSW1WdWRtbHliMjV0Wlc1MElqb2lSRVZXUlV4UFVFMUZUbFFpTENKcFlYUWlPakUxT0RreU56RTJOVGdzSW1WNGNDSTZORGN4TXpRM05EQTFPSDAuTjRYU3gyQ21La0gwT2FoQW40LU1VeUs2VUE0bzgwVVNVVmJxSmtrMmpyRQ==
           in: header
           name: Authorization
           description: 'Base64 encoded string of `client_id:client_secret` Client ID and Secret can be obtained from [oAuth settings in Dashboard](https://dashboard.xendit.co/settings/developers#oauth)'
